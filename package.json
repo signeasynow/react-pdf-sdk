@@ -1,0 +1,22 @@
+{
+  "name": "react_plugin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "babel src --out-dir dist"
+  },
+  "module": "src/index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.22.9",
+    "@babel/core": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
+    "@babel/preset-react": "^7.22.5"
+  },
+  "peerDependencies": {
+    "react": "^17.0.0"
+  }
+}
