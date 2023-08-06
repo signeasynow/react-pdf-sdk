@@ -12,7 +12,7 @@ export const useCreateIframeAndLoadViewer = ({
   const createIframe = () => {
     const iframe = document.createElement('iframe');
 
-    iframe.src = `${process.env.PUBLIC_URL}/dist/index.html`;
+    iframe.src = `/dist/index.html`;
 
     iframe.id = "webviewer-1";
     iframe.title = "webviewer";
