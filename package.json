@@ -1,12 +1,13 @@
 {
-  "name": "react_plugin",
-  "version": "1.0.0",
+  "name": "pdf_editor_aleon35_react_plugin",
+  "version": "1.0.2",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "build": "babel src --out-dir dist"
   },
   "module": "src/index.js",
+  "types": "src/index.d.ts",
   "keywords": [],
   "author": "",
   "license": "ISC",
