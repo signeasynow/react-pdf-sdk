@@ -32,13 +32,23 @@ export const useCreateIframeAndLoadViewer = ({
 
     // When the iframe is loaded, post the file to it
     iframe.onload = function() {
-      iframeLoadedSuccessfully.current = true;
       // @ts-ignore
       iframe.contentWindow.postMessage({ file, fileName, tools }, '*');
     };
 
     container.current.appendChild(iframe);
   };
+
+  const handleIframeLoaded = (event) => {
+    if (event.data.type === 'iframe-loaded' && event.data.success) {
+      iframeLoadedSuccessfully.current = true;
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('message', handleIframeLoaded);
+    return () => window.removeEventListener('message', handleIframeLoaded);
+  }, []);
 
   const handleVisibilityChange = () => {
     if (!document.hidden && !iframeLoadedSuccessfully.current) {

@@ -12,6 +12,8 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     tools = _ref.tools,
     container = _ref.container;
   var done = (0, _react.useRef)(false);
+  var iframeLoadedSuccessfully = (0, _react.useRef)(false); // Add this ref to keep track of iframe's load state
+
   var createIframe = function createIframe() {
     var iframe = document.createElement('iframe');
     iframe.src = "/dist/index.html";
@@ -31,6 +33,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
 
     // When the iframe is loaded, post the file to it
     iframe.onload = function () {
+      iframeLoadedSuccessfully.current = true;
       // @ts-ignore
       iframe.contentWindow.postMessage({
         file: file,
@@ -41,7 +44,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     container.current.appendChild(iframe);
   };
   var handleVisibilityChange = function handleVisibilityChange() {
-    if (!document.hidden) {
+    if (!document.hidden && !iframeLoadedSuccessfully.current) {
       var iframe = document.getElementById('webviewer-1');
       if (iframe) {
         iframe.remove();
