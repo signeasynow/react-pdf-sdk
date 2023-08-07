@@ -8,6 +8,7 @@ export const useCreateIframeAndLoadViewer = ({
   container,
 }) => {
   const done = useRef(false);
+  const iframeLoadedSuccessfully = useRef(false); // Add this ref to keep track of iframe's load state
 
   const createIframe = () => {
     const iframe = document.createElement('iframe');
@@ -31,6 +32,7 @@ export const useCreateIframeAndLoadViewer = ({
 
     // When the iframe is loaded, post the file to it
     iframe.onload = function() {
+      iframeLoadedSuccessfully.current = true;
       // @ts-ignore
       iframe.contentWindow.postMessage({ file, fileName, tools }, '*');
     };
@@ -39,7 +41,7 @@ export const useCreateIframeAndLoadViewer = ({
   };
 
   const handleVisibilityChange = () => {
-    if (!document.hidden) {
+    if (!document.hidden && !iframeLoadedSuccessfully.current) {
       const iframe = document.getElementById('webviewer-1');
       if (iframe) {
         iframe.remove();
