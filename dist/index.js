@@ -5,18 +5,22 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.useCreateIframeAndLoadViewer = void 0;
 var _react = require("react");
-require("pdfjs-dist/web/pdf_viewer.css");
+// DONT USE: import 'pdfjs-dist/web/pdf_viewer.css';
+
 var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
-  var file = _ref.file,
+  var domWindow = _ref.domWindow,
+    file = _ref.file,
     fileName = _ref.fileName,
     tools = _ref.tools,
-    container = _ref.container;
+    container = _ref.container,
+    iframeSrc = _ref.iframeSrc,
+    onFileFailed = _ref.onFileFailed;
   var done = (0, _react.useRef)(false);
   var iframeLoadedSuccessfully = (0, _react.useRef)(false); // Add this ref to keep track of iframe's load state
 
   var createIframe = function createIframe() {
     var iframe = document.createElement('iframe');
-    iframe.src = "/dist/index.html";
+    iframe.src = iframeSrc || "/dist/index.html";
     iframe.id = "webviewer-1";
     iframe.title = "webviewer";
     iframe.frameBorder = "0";
@@ -33,17 +37,52 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
 
     // When the iframe is loaded, post the file to it
     iframe.onload = function () {
-      iframeLoadedSuccessfully.current = true;
-      // @ts-ignore
-      iframe.contentWindow.postMessage({
+      var message = {
         file: file,
         fileName: fileName,
         tools: tools
-      }, '*');
+      };
+
+      // Set up a function to send the message
+      var sendMessage = function sendMessage() {
+        console.log("sending a mesg");
+        iframe.contentWindow.postMessage(message, '*');
+      };
+
+      // Call the function immediately to send the first message
+      sendMessage();
+
+      // Set up an interval to send the message every 1000ms (1 second)
+      var interval = setInterval(sendMessage, 200);
+
+      // Set up an event listener to listen for a response from the iframe
+      window.addEventListener('message', function (event) {
+        if (event.data.type === 'file-received' && event.data.success) {
+          // If the message was received successfully, clear the interval
+          clearInterval(interval);
+        }
+        if (event.data.type === 'file-failed' && event.data.message) {
+          // If the message was received successfully, clear the interval
+          onFileFailed(event.data.message);
+        }
+      });
     };
     container.current.appendChild(iframe);
   };
+  var handleIframeLoaded = function handleIframeLoaded(event) {
+    if (event.data.type === 'iframe-loaded' && event.data.success) {
+      console.log("received change!!", event.data);
+      iframeLoadedSuccessfully.current = true;
+    }
+  };
+  (0, _react.useEffect)(function () {
+    domWindow.addEventListener('message', handleIframeLoaded);
+    return function () {
+      return domWindow.removeEventListener('message', handleIframeLoaded);
+    };
+  }, []);
   var handleVisibilityChange = function handleVisibilityChange() {
+    console.log(iframeLoadedSuccessfully.current, 'iframeLoadedSuccessfully.current');
     if (!document.hidden && !iframeLoadedSuccessfully.current) {
       var iframe = document.getElementById('webviewer-1');
       if (iframe) {

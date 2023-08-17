@@ -1,11 +1,14 @@
 import { useEffect, useRef } from 'react';
-import 'pdfjs-dist/web/pdf_viewer.css';
+// DONT USE: import 'pdfjs-dist/web/pdf_viewer.css';
 
 export const useCreateIframeAndLoadViewer = ({
+  domWindow,
   file,
   fileName,
   tools,
   container,
+  iframeSrc,
+  onFileFailed
 }) => {
   const done = useRef(false);
   const iframeLoadedSuccessfully = useRef(false); // Add this ref to keep track of iframe's load state
@@ -13,7 +16,7 @@ export const useCreateIframeAndLoadViewer = ({
   const createIframe = () => {
     const iframe = document.createElement('iframe');
 
-    iframe.src = `/dist/index.html`;
+    iframe.src = iframeSrc || `/dist/index.html`;
 
     iframe.id = "webviewer-1";
     iframe.title = "webviewer";
@@ -32,8 +35,31 @@ export const useCreateIframeAndLoadViewer = ({
 
     // When the iframe is loaded, post the file to it
     iframe.onload = function() {
-      // @ts-ignore
-      iframe.contentWindow.postMessage({ file, fileName, tools }, '*');
+      const message = { file, fileName, tools };
+    
+      // Set up a function to send the message
+      const sendMessage = () => {
+        console.log("sending a mesg")
+        iframe.contentWindow.postMessage(message, '*');
+      };
+    
+      // Call the function immediately to send the first message
+      sendMessage();
+    
+      // Set up an interval to send the message every 1000ms (1 second)
+      const interval = setInterval(sendMessage, 200);
+    
+      // Set up an event listener to listen for a response from the iframe
+      window.addEventListener('message', function(event) {
+        if (event.data.type === 'file-received' && event.data.success) {
+          // If the message was received successfully, clear the interval
+          clearInterval(interval);
+        }
+        if (event.data.type === 'file-failed' && event.data.message) {
+          // If the message was received successfully, clear the interval
+          onFileFailed(event.data.message);
+        }
+      });
     };
 
     container.current.appendChild(iframe);
@@ -41,16 +67,18 @@ export const useCreateIframeAndLoadViewer = ({
 
   const handleIframeLoaded = (event) => {
     if (event.data.type === 'iframe-loaded' && event.data.success) {
+      console.log("received change!!", event.data)
       iframeLoadedSuccessfully.current = true;
     }
   };
 
   useEffect(() => {
-    window.addEventListener('message', handleIframeLoaded);
-    return () => window.removeEventListener('message', handleIframeLoaded);
+    domWindow.addEventListener('message', handleIframeLoaded);
+    return () => domWindow.removeEventListener('message', handleIframeLoaded);
   }, []);
 
   const handleVisibilityChange = () => {
+    console.log(iframeLoadedSuccessfully.current, 'iframeLoadedSuccessfully.current')
     if (!document.hidden && !iframeLoadedSuccessfully.current) {
       const iframe = document.getElementById('webviewer-1');
       if (iframe) {
