@@ -36,3 +36,23 @@ useCreateIframeAndLoadViewer({
   ...other parameters
 });
 ```
+
+#### editing `Object` `[]`
+
+| Field   | Description      |
+| ------- | ---------------- |
+| remove | Enable the ability to remove pages |
+| rotation | Enable the rotation of individual pages |
+
+
+```
+useCreateIframeAndLoadViewer({
+  tools: {
+    editing: [
+      "remove",
+      "rotation"
+    ],
+  },
+  ...other parameters
+});
+```
