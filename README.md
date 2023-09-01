@@ -1,3 +1,11 @@
 # hello
 
-what up
+Parameters
+```
+{
+  thumbnails: [
+    "zoom",
+    "view-expansion"
+  ]
+}
+```
