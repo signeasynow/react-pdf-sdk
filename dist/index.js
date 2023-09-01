@@ -8,7 +8,7 @@ var _react = require("react");
 // DONT USE: import 'pdfjs-dist/web/pdf_viewer.css';
 
 var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
-  var domWindow = _ref.domWindow,
+  var domWindow = _ref.window,
     file = _ref.file,
     fileName = _ref.fileName,
     tools = _ref.tools,
@@ -56,7 +56,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
       var interval = setInterval(sendMessage, 200);
 
       // Set up an event listener to listen for a response from the iframe
-      window.addEventListener('message', function (event) {
+      window.parent.addEventListener('message', function (event) {
         if (event.data.type === 'file-received' && event.data.success) {
           // If the message was received successfully, clear the interval
           clearInterval(interval);
@@ -76,13 +76,12 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     }
   };
   (0, _react.useEffect)(function () {
-    domWindow.addEventListener('message', handleIframeLoaded);
+    window.parent.addEventListener('message', handleIframeLoaded);
     return function () {
-      return domWindow.removeEventListener('message', handleIframeLoaded);
+      return window.parent.removeEventListener('message', handleIframeLoaded);
     };
   }, []);
   var handleVisibilityChange = function handleVisibilityChange() {
-    console.log(iframeLoadedSuccessfully.current, 'iframeLoadedSuccessfully.current');
     if (!document.hidden && !iframeLoadedSuccessfully.current) {
       var iframe = document.getElementById('webviewer-1');
       if (iframe) {

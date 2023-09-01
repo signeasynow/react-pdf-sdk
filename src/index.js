@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 // DONT USE: import 'pdfjs-dist/web/pdf_viewer.css';
 
 export const useCreateIframeAndLoadViewer = ({
-  domWindow,
+  window: domWindow,
   file,
   fileName,
   tools,
@@ -50,7 +50,7 @@ export const useCreateIframeAndLoadViewer = ({
       const interval = setInterval(sendMessage, 200);
     
       // Set up an event listener to listen for a response from the iframe
-      window.addEventListener('message', function(event) {
+      window.parent.addEventListener('message', function(event) {
         if (event.data.type === 'file-received' && event.data.success) {
           // If the message was received successfully, clear the interval
           clearInterval(interval);
@@ -73,12 +73,11 @@ export const useCreateIframeAndLoadViewer = ({
   };
 
   useEffect(() => {
-    domWindow.addEventListener('message', handleIframeLoaded);
-    return () => domWindow.removeEventListener('message', handleIframeLoaded);
+    window.parent.addEventListener('message', handleIframeLoaded);
+    return () => window.parent.removeEventListener('message', handleIframeLoaded);
   }, []);
 
   const handleVisibilityChange = () => {
-    console.log(iframeLoadedSuccessfully.current, 'iframeLoadedSuccessfully.current')
     if (!document.hidden && !iframeLoadedSuccessfully.current) {
       const iframe = document.getElementById('webviewer-1');
       if (iframe) {
