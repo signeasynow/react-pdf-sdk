@@ -6,12 +6,34 @@
 
 ### tools `Object` `{}`
 
-Control what tools are available in the UI. Available keys are `thumbnails`, ...
+Control what tools are available in the UI. Available keys are `thumbnails`, `general`, `editing`, ...
 
 ```
 useCreateIframeAndLoadViewer({
   tools: {
     thumbnails: ...,
+    general: ...,
+  },
+  ...other parameters
+});
+```
+
+#### general `Object` `[]`
+
+| Field   | Description      |
+| ------- | ---------------- |
+| zoom | Enable zoom in/out of the document in view |
+| search | Enable search functions |
+| download | Enable downloading the document |
+
+
+```
+useCreateIframeAndLoadViewer({
+  tools: {
+    thumbnails: [
+      "zoom",
+      "expand"
+    ],
   },
   ...other parameters
 });
