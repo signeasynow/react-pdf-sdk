@@ -13,6 +13,7 @@ useCreateIframeAndLoadViewer({
   tools: {
     thumbnails: ...,
     general: ...,
+    editing: ...,
   },
   ...other parameters
 });
@@ -25,6 +26,7 @@ useCreateIframeAndLoadViewer({
 | zoom | Enable zoom in/out of the document in view |
 | search | Enable search functions |
 | download | Enable downloading the document |
+| thumbnails | Enable a thumbnails panel |
 
 
 ```
