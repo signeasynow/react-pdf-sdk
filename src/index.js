@@ -34,12 +34,13 @@ export const useCreateIframeAndLoadViewer = ({
 
     // When the iframe is loaded, post the file to it
     iframe.onload = function() {
+      const targetOrigin = window.location.origin;
       const message = { file, fileName, tools };
     
       // Set up a function to send the message
       const sendMessage = () => {
         console.log("sending a mesg")
-        iframe.contentWindow.postMessage(message, '*');
+        iframe.contentWindow.postMessage(message, targetOrigin);
       };
     
       // Call the function immediately to send the first message
@@ -98,10 +99,11 @@ export const useCreateIframeAndLoadViewer = ({
   }, [container, file]);
 
   useEffect(() => {
+    
     document.addEventListener('click', function() {
       // @ts-ignore
       var iframeWin = document.getElementById('webviewer-1').contentWindow;
-      iframeWin.postMessage('clickedOutside', '*');
+      iframeWin.postMessage('clickedOutside', window.location.origin);
     });
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
@@ -112,7 +114,7 @@ export const useCreateIframeAndLoadViewer = ({
   const download = () => {
     // @ts-ignore
     var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
-    iframeWin.postMessage({ type: 'download' }, '*');
+    iframeWin.postMessage({ type: 'download' }, window.location.origin);
   };
 
   return { download };

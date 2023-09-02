@@ -8,8 +8,7 @@ var _react = require("react");
 // DONT USE: import 'pdfjs-dist/web/pdf_viewer.css';
 
 var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
-  var domWindow = _ref.window,
-    file = _ref.file,
+  var file = _ref.file,
     fileName = _ref.fileName,
     tools = _ref.tools,
     container = _ref.container,
