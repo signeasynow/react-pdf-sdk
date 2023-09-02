@@ -32,9 +32,11 @@ useCreateIframeAndLoadViewer({
 ```
 useCreateIframeAndLoadViewer({
   tools: {
-    thumbnails: [
+    general: [
       "zoom",
-      "expand"
+      "search",
+      "download",
+      "thumbnails"
     ],
   },
   ...other parameters
