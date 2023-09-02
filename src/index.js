@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 // DONT USE: import 'pdfjs-dist/web/pdf_viewer.css';
 
 export const useCreateIframeAndLoadViewer = ({
-  window: domWindow,
   file,
   fileName,
   tools,
