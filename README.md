@@ -8,6 +8,10 @@
 
 The URL path to your file.
 
+### container `Required`
+
+The HTML element to attach the PDF viewer to.
+
 ### fileName `String` `file.pdf` `Optional`
 
 The name of your file. Useful if you want to configure the file name of the downloaded file.
