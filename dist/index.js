@@ -11,6 +11,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
   var file = _ref.file,
     fileName = _ref.fileName,
     tools = _ref.tools,
+    locale = _ref.locale,
     container = _ref.container,
     iframeSrc = _ref.iframeSrc,
     onFileFailed = _ref.onFileFailed;
@@ -36,16 +37,18 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
 
     // When the iframe is loaded, post the file to it
     iframe.onload = function () {
+      var targetOrigin = window.location.origin;
       var message = {
         file: file,
         fileName: fileName,
-        tools: tools
+        tools: tools,
+        locale: locale
       };
 
       // Set up a function to send the message
       var sendMessage = function sendMessage() {
         console.log("sending a mesg");
-        iframe.contentWindow.postMessage(message, '*');
+        iframe.contentWindow.postMessage(message, targetOrigin);
       };
 
       // Call the function immediately to send the first message
@@ -103,7 +106,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     document.addEventListener('click', function () {
       // @ts-ignore
       var iframeWin = document.getElementById('webviewer-1').contentWindow;
-      iframeWin.postMessage('clickedOutside', '*');
+      iframeWin.postMessage('clickedOutside', window.location.origin);
     });
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return function () {
@@ -116,7 +119,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     var iframeWin = (_document = document) === null || _document === void 0 || (_document = _document.getElementById('webviewer-1')) === null || _document === void 0 ? void 0 : _document.contentWindow;
     iframeWin.postMessage({
       type: 'download'
-    }, '*');
+    }, window.location.origin);
   };
   return {
     download: download

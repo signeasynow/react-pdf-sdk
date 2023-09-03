@@ -5,6 +5,7 @@ export const useCreateIframeAndLoadViewer = ({
   file,
   fileName,
   tools,
+  locale,
   container,
   iframeSrc,
   onFileFailed
@@ -35,7 +36,7 @@ export const useCreateIframeAndLoadViewer = ({
     // When the iframe is loaded, post the file to it
     iframe.onload = function() {
       const targetOrigin = window.location.origin;
-      const message = { file, fileName, tools };
+      const message = { file, fileName, tools, locale };
     
       // Set up a function to send the message
       const sendMessage = () => {
