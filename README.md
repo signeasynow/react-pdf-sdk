@@ -82,3 +82,11 @@ useCreateIframeAndLoadViewer({
   ...other parameters
 });
 ```
+
+#### locale `string` `en`
+
+Options:
+
+`en` - English
+`es` - Spanish
+`ru` - Russian
