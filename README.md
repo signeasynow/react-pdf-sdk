@@ -4,6 +4,14 @@
 
 ## Parameters
 
+### file `String` `""` `Required`
+
+The URL path to your file.
+
+### fileName `String` `file.pdf` `Optional`
+
+The name of your file. Useful if you want to configure the file name of the downloaded file.
+
 ### tools `Object` `{}`
 
 Control what tools are available in the UI. Available keys are `thumbnails`, `general`, `editing`, ...
@@ -90,3 +98,15 @@ Options:
 `en` - English
 `es` - Spanish
 `ru` - Russian
+
+#### onFileFailed `Function` `optional`
+
+Callback when a file fails to upload
+
+```
+useCreateIframeAndLoadViewer({
+  onFileFailed: (errorMessage) => {
+    // handle the failure as you need
+  }
+});
+```

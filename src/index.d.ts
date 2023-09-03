@@ -4,7 +4,6 @@ declare module 'pdf_editor_aleon35_react_plugin' {
   export const useCreateIframeAndLoadViewer: (
     props: {
       file: string;
-      fileName: string;
       locale: "en" | "es" | "ru",
       tools: {
         thumbnails?: ("zoom" | "expand")[];
@@ -12,6 +11,8 @@ declare module 'pdf_editor_aleon35_react_plugin' {
         editing?: ("remove" | "rotation")[];
       };
       container: React.MutableRefObject<HTMLElement | null> | (HTMLElement | null);
+      fileName?: string;
+      onFileFailed?: (message: string) => void;
     }
   ) => {
     download: () => void;
