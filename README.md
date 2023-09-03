@@ -96,7 +96,9 @@ useCreateIframeAndLoadViewer({
 Options:
 
 `en` - English
+
 `es` - Spanish
+
 `ru` - Russian
 
 #### onFileFailed `Function` `optional`
