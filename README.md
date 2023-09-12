@@ -95,7 +95,7 @@ useCreateIframeAndLoadViewer({
 });
 ```
 
-#### locale `string` `en`
+#### locale `string` `en` `Optional`
 
 Options:
 

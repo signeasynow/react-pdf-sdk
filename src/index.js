@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
-// DONT USE: import 'pdfjs-dist/web/pdf_viewer.css';
 
 export const useCreateIframeAndLoadViewer = ({
   file,
   fileName,
+  licenseKey,
   tools,
   locale,
   container,
@@ -36,11 +36,11 @@ export const useCreateIframeAndLoadViewer = ({
     // When the iframe is loaded, post the file to it
     iframe.onload = function() {
       const targetOrigin = window.location.origin;
-      const message = { file, fileName, tools, locale };
+      const message = { file, fileName, tools, locale, licenseKey };
     
       // Set up a function to send the message
       const sendMessage = () => {
-        console.log("sending a mesg")
+        // @ts-ignore
         iframe.contentWindow.postMessage(message, targetOrigin);
       };
     
@@ -68,7 +68,6 @@ export const useCreateIframeAndLoadViewer = ({
 
   const handleIframeLoaded = (event) => {
     if (event.data.type === 'iframe-loaded' && event.data.success) {
-      console.log("received change!!", event.data)
       iframeLoadedSuccessfully.current = true;
     }
   };
