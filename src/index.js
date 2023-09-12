@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export const useCreateIframeAndLoadViewer = ({
   file,
@@ -10,13 +10,15 @@ export const useCreateIframeAndLoadViewer = ({
   iframeSrc,
   onFileFailed
 }) => {
+  const [internalIsReady, setInternalIsReady] = useState(false);  // Add this state variable
+
   const done = useRef(false);
   const iframeLoadedSuccessfully = useRef(false); // Add this ref to keep track of iframe's load state
 
   const createIframe = () => {
     const iframe = document.createElement('iframe');
 
-    iframe.src = iframeSrc || `/dist/index.html`;
+    iframe.src = iframeSrc || `/pdf-ui/index.html`;
 
     iframe.id = "webviewer-1";
     iframe.title = "webviewer";
@@ -69,6 +71,7 @@ export const useCreateIframeAndLoadViewer = ({
   const handleIframeLoaded = (event) => {
     if (event.data.type === 'iframe-loaded' && event.data.success) {
       iframeLoadedSuccessfully.current = true;
+      setInternalIsReady(true);
     }
   };
 
@@ -99,7 +102,6 @@ export const useCreateIframeAndLoadViewer = ({
   }, [container, file]);
 
   useEffect(() => {
-    
     document.addEventListener('click', function() {
       // @ts-ignore
       var iframeWin = document.getElementById('webviewer-1').contentWindow;
@@ -117,5 +119,11 @@ export const useCreateIframeAndLoadViewer = ({
     iframeWin.postMessage({ type: 'download' }, window.location.origin);
   };
 
-  return { download };
+  const toggleFullScreenThumbnails = (enable) => {
+    // @ts-ignore
+    var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    iframeWin.postMessage({ type: 'toggle-full-screen-thumbnails', enable }, window.location.origin);
+  };
+
+  return { download, toggleFullScreenThumbnails, isReady: internalIsReady };
 };
