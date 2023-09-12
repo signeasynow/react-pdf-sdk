@@ -13,19 +13,10 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     locale = _ref.locale,
     container = _ref.container,
     iframeSrc = _ref.iframeSrc,
-    coreIframeSrc = _ref.coreIframeSrc,
     onFileFailed = _ref.onFileFailed;
   var done = (0, _react.useRef)(false);
   var iframeLoadedSuccessfully = (0, _react.useRef)(false); // Add this ref to keep track of iframe's load state
 
-  var createCoreIframe = function createCoreIframe() {
-    var iframe = document.createElement('iframe');
-    iframe.src = coreIframeSrc || "/core/index.html";
-    iframe.id = "webviewer-core";
-    iframe.style.display = "none";
-    // ... (rest of the code)
-    container.current.appendChild(iframe);
-  };
   var createIframe = function createIframe() {
     var iframe = document.createElement('iframe');
     iframe.src = iframeSrc || "/dist/index.html";
@@ -56,7 +47,6 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
 
       // Set up a function to send the message
       var sendMessage = function sendMessage() {
-        console.log("sending a mesg");
         // @ts-ignore
         iframe.contentWindow.postMessage(message, targetOrigin);
       };
@@ -69,7 +59,6 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
 
       // Set up an event listener to listen for a response from the iframe
       window.parent.addEventListener('message', function (event) {
-        console.log(event, 'some message');
         if (event.data.type === 'file-received' && event.data.success) {
           // If the message was received successfully, clear the interval
           clearInterval(interval);
@@ -78,27 +67,12 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
           // If the message was received successfully, clear the interval
           onFileFailed(event.data.message);
         }
-        if (event.data.type === "fromUi") {
-          console.log("sending new message", event.data);
-          var coreIframe = document.getElementById('webviewer-core');
-          var payload = event.data;
-          // @ts-ignore
-          coreIframe.contentWindow.postMessage(payload, window.location.origin);
-        }
-        if (event.data.type === "fromCore" && event.data.result) {
-          console.log("sending new message", event.data);
-          var uiIframe = document.getElementById('webviewer-1');
-          var _payload = event.data;
-          // @ts-ignore
-          uiIframe.contentWindow.postMessage(_payload, window.location.origin);
-        }
       });
     };
     container.current.appendChild(iframe);
   };
   var handleIframeLoaded = function handleIframeLoaded(event) {
     if (event.data.type === 'iframe-loaded' && event.data.success) {
-      console.log("received change!!", event.data);
       iframeLoadedSuccessfully.current = true;
     }
   };
@@ -114,7 +88,6 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
       if (iframe) {
         iframe.remove();
       }
-      createCoreIframe();
       createIframe();
     }
   };
@@ -126,7 +99,6 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
       return;
     }
     done.current = true;
-    createCoreIframe();
     createIframe();
   }, [container, file]);
   (0, _react.useEffect)(function () {
