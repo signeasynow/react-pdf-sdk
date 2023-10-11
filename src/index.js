@@ -1,19 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 
 export const useCreateIframeAndLoadViewer = ({
-  file,
+  files,
   fileName,
   licenseKey,
+  uuid,
   tools,
   locale,
+  mode,
   container,
   iframeSrc,
   onFileFailed
 }) => {
   const [internalIsReady, setInternalIsReady] = useState(false);  // Add this state variable
-
+  const [selectedPages, setSelectedPages] = useState([]);
   const done = useRef(false);
   const iframeLoadedSuccessfully = useRef(false); // Add this ref to keep track of iframe's load state
+  const [pagesLoaded, setPagesLoaded] = useState(null);
 
   const createIframe = () => {
     const iframe = document.createElement('iframe');
@@ -38,7 +41,7 @@ export const useCreateIframeAndLoadViewer = ({
     // When the iframe is loaded, post the file to it
     iframe.onload = function() {
       const targetOrigin = window.location.origin;
-      const message = { file, fileName, tools, locale, licenseKey };
+      const message = { files, fileName, tools, locale, licenseKey, mode, uuid };
     
       // Set up a function to send the message
       const sendMessage = () => {
@@ -61,6 +64,12 @@ export const useCreateIframeAndLoadViewer = ({
         if (event.data.type === 'file-failed' && event.data.message) {
           // If the message was received successfully, clear the interval
           onFileFailed(event.data.message);
+        }
+        if (event.data.type === 'multi-page-selection-change' && Array.isArray(event.data.message)) {
+          setSelectedPages(event.data.message);
+        }
+        if (event.data.type === "pages-loaded") {
+          setPagesLoaded(event.data.message);
         }
       });
     };
@@ -99,7 +108,7 @@ export const useCreateIframeAndLoadViewer = ({
     }
     done.current = true;
     createIframe();
-  }, [container, file]);
+  }, [container, files]);
 
   useEffect(() => {
     document.addEventListener('click', function() {
@@ -125,5 +134,146 @@ export const useCreateIframeAndLoadViewer = ({
     iframeWin.postMessage({ type: 'toggle-full-screen-thumbnails', enable }, window.location.origin);
   };
 
-  return { download, toggleFullScreenThumbnails, isReady: internalIsReady };
+  const toggleSearchbar = (enable) => {
+    // @ts-ignore
+    var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    iframeWin.postMessage({ type: 'toggle-searchbar', enable }, window.location.origin);
+  };
+
+  const setThumbnailZoom = (value) => {
+    // @ts-ignore
+    var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    iframeWin.postMessage({ type: 'set-thumbnail-zoom', value }, window.location.origin);
+  };
+
+  const splitPages = async () => {
+    return new Promise((resolve, reject) => {
+      const listener = (event) => {
+        if (event.data.type === 'split-pages-completed' && event.data.success) {
+          resolve(event.data.message);  // Resolve the promise with the result
+          window.removeEventListener('message', listener);  // Remove the listener to clean up
+        }
+        else if (event.data.type === 'split-pages-failed') {
+          reject(new Error(event.data.message));  // Reject the promise with the error message
+          window.removeEventListener('message', listener);  // Remove the listener to clean up
+        }
+      };
+  
+      // Adding the event listener before sending the postMessage
+      window.addEventListener('message', listener);
+  
+      // @ts-ignore
+      var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    
+      // Sending the extract-pages message to the iframe
+      iframeWin.postMessage({ type: 'split-pages' }, window.location.origin);
+    });
+  }
+
+  const mergeFiles = async (value) => {
+    return new Promise((resolve, reject) => {
+      const listener = (event) => {
+        if (event.data.type === 'merge-files-completed' && event.data.success) {
+          resolve(event.data.message);  // Resolve the promise with the result
+          window.removeEventListener('message', listener);  // Remove the listener to clean up
+        }
+        else if (event.data.type === 'merge-files-failed') {
+          reject(new Error(event.data.message));  // Reject the promise with the error message
+          window.removeEventListener('message', listener);  // Remove the listener to clean up
+        }
+      };
+  
+      // Adding the event listener before sending the postMessage
+      window.addEventListener('message', listener);
+  
+      // @ts-ignore
+      var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    
+      // Sending the extract-pages message to the iframe
+      iframeWin.postMessage({ type: 'merge-files', value }, window.location.origin);
+    });
+  };
+
+  const removeChatHistory = async () => {
+    return new Promise((resolve, reject) => {
+      const listener = (event) => {
+        if (event.data.type === 'remove-chat-history-completed' && event.data.success) {
+          resolve(event.data.message);  // Resolve the promise with the result
+          window.removeEventListener('message', listener);  // Remove the listener to clean up
+        }
+        else if (event.data.type === 'remove-chat-history-failed') {
+          reject(new Error(event.data.message));  // Reject the promise with the error message
+          window.removeEventListener('message', listener);  // Remove the listener to clean up
+        }
+      };
+  
+      // Adding the event listener before sending the postMessage
+      window.addEventListener('message', listener);
+  
+      // @ts-ignore
+      var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    
+      // Sending the extract-pages message to the iframe
+      iframeWin.postMessage({ type: 'remove-chat-history' }, window.location.origin);
+    });
+  };
+
+  const combineFiles = async (value) => {
+    return new Promise((resolve, reject) => {
+      const listener = (event) => {
+        if (event.data.type === 'combine-files-completed' && event.data.success) {
+          resolve(event.data.message);  // Resolve the promise with the result
+          window.removeEventListener('message', listener);  // Remove the listener to clean up
+        }
+        else if (event.data.type === 'combine-files-failed') {
+          reject(new Error(event.data.message));  // Reject the promise with the error message
+          window.removeEventListener('message', listener);  // Remove the listener to clean up
+        }
+      };
+  
+      // Adding the event listener before sending the postMessage
+      window.addEventListener('message', listener);
+  
+      // @ts-ignore
+      var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    
+      // Sending the extract-pages message to the iframe
+      iframeWin.postMessage({ type: 'combine-files', value }, window.location.origin);
+    });
+  };
+
+  const extractPages = async (value) => {
+    return new Promise((resolve, reject) => {
+      const listener = (event) => {
+        if (event.data.type === 'extract-pages-completed' && event.data.success) {
+          resolve(event.data.result);  // Resolve the promise with the result
+          window.removeEventListener('message', listener);  // Remove the listener to clean up
+        }
+        else if (event.data.type === 'extract-pages-failed') {
+          reject(new Error(event.data.message));  // Reject the promise with the error message
+          window.removeEventListener('message', listener);  // Remove the listener to clean up
+        }
+      };
+  
+      // Adding the event listener before sending the postMessage
+      window.addEventListener('message', listener);
+  
+      // @ts-ignore
+      var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    
+      // Sending the extract-pages message to the iframe
+      iframeWin.postMessage({ type: 'extract-pages', value }, window.location.origin);
+    });
+  };
+
+  return {
+    removeChatHistory,
+    splitPages,
+    combineFiles, 
+    mergeFiles,
+    pagesLoaded,
+    extractPages, download,
+    toggleSearchbar,
+    toggleFullScreenThumbnails,
+    isReady: internalIsReady, setThumbnailZoom, selectedPages };
 };

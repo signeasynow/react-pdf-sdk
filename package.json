@@ -1,7 +1,7 @@
 {
-  "name": "pdf_editor_aleon35_react_plugin",
-  "version": "1.0.48",
-  "description": "",
+  "name": "@prodfox/react-ui-plugin",
+  "version": "1.1.4",
+  "description": "## Core",
   "main": "dist/index.js",
   "scripts": {
     "build": "babel src --out-dir dist"
@@ -9,7 +9,7 @@
   "module": "src/index.js",
   "types": "src/index.d.ts",
   "keywords": [],
-  "author": "",
+  "author": "Alex Leon",
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.22.9",
@@ -18,6 +18,15 @@
     "@babel/preset-react": "^7.22.5"
   },
   "peerDependencies": {
-    "react": "^17.0.0"
-  }
+    "react": ">=17.0.0"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alien35/pdf-react-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alien35/pdf-react-plugin/issues"
+  },
+  "homepage": "https://github.com/alien35/pdf-react-plugin#readme"
 }
