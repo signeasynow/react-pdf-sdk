@@ -10,12 +10,16 @@ Add View to your app for free. Learn pricing for all features [here](https://www
 
 https://react-pdf-demo-sigma.vercel.app/
 
+[Demo source code](https://github.com/prodfox-pdf/react-pdf-demo)
+
 # Quick start
 
+1. Copy-paste the `pdf-ui` folder [here](https://github.com/prodfox-pdf/react-pdf-demo/tree/main/public/pdf-ui) into your own `public` folder.
 
+2. Create a component
 ```
 import { useRef } from 'react';
-import { useCreateIframeAndLoadViewer } from "pdf_editor_aleon35_react_plugin";
+import { useCreateIframeAndLoadViewer } from "@prodfox/react-ui-plugin";
 
 function App() {
   const containerRef = useRef(null);
@@ -68,6 +72,7 @@ function App() {
 
 export default App;
 ```
+
 ## Core
 
 ## Parameters
