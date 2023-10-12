@@ -26,8 +26,6 @@ function App() {
 
   const { download } = useCreateIframeAndLoadViewer({
     container: containerRef,
-    fileName: "my-file.pdf",
-    uuid: "some-user",
     licenseKey: "sandbox",
     locale: "en",
     tools: {
@@ -77,17 +75,9 @@ export default App;
 
 ## Parameters
 
-### file `String` `""` `Required`
-
-The URL path to your file.
-
 ### container `Required`
 
 The HTML element to attach the PDF viewer to.
-
-### fileName `String` `file.pdf` `Optional`
-
-The name of your file. Useful if you want to configure the file name of the downloaded file.
 
 ### tools `Object` `{}`
 
@@ -112,6 +102,7 @@ useCreateIframeAndLoadViewer({
 | search | Enable search functions |
 | download | Enable downloading the document |
 | thumbnails | Enable a thumbnails panel |
+| panel-toggle | Enable the left-side panel to be togglable |
 
 
 ```
@@ -121,7 +112,8 @@ useCreateIframeAndLoadViewer({
       "zoom",
       "search",
       "download",
-      "thumbnails"
+      "thumbnails",
+      "panel-toggle"
     ],
   },
   ...other parameters
@@ -154,14 +146,17 @@ useCreateIframeAndLoadViewer({
 | ------- | ---------------- |
 | remove | Enable the ability to remove pages |
 | rotation | Enable the rotation of individual pages |
-
+| extraction | Enabling extracting out a set of pages into one document |
+| move | Re-arrange pages in a document |
 
 ```
 useCreateIframeAndLoadViewer({
   tools: {
     editing: [
       "remove",
-      "rotation"
+      "rotation",
+      "extraction",
+      "move"
     ],
   },
   ...other parameters
@@ -178,6 +173,8 @@ Options:
 
 `ru` - Russian
 
+(Reach out if you need a particular language added)
+
 #### onFileFailed `Function` `optional`
 
 Callback when a file fails to upload
@@ -188,4 +185,113 @@ useCreateIframeAndLoadViewer({
     // handle the failure as you need
   }
 });
+```
+
+#### mode `string` `optional`
+
+Defaults to `regular`. Set it to `split` to enable being able to select split markers to be then used for splitting a document into several documents.
+
+# Functions
+
+Combine several files into one
+
+```
+const { combineFiles } = useCreateIframeAndLoadViewer({
+  ...
+});
+
+combineFiles();
+
+```
+
+Listen for when the pages are loaded for the active document
+
+```
+const { pagesLoaded } = useCreateIframeAndLoadViewer({
+  ...
+});
+
+if (pagesLoaded) {
+  // logic here
+}
+```
+
+Download
+
+```
+const { download } = useCreateIframeAndLoadViewer({
+  ...
+});
+
+download();
+```
+
+Listen for when the PDF editor is ready to accept commands
+
+```
+const { isReady } = useCreateIframeAndLoadViewer({
+  ...
+});
+
+if (isReady) {
+  // logic here
+}
+```
+
+Toggle displaying the full screen thumbnail view
+
+```
+const { toggleFullScreenThumbnails } = useCreateIframeAndLoadViewer({
+  ...
+});
+
+toggleFullScreenThumbnails(true) // set this to true or false to open/close it.
+```
+
+Control the thumbnail zoom level. Ranges from 0 to 1.
+
+```
+const { setThumbnailZoom } = useCreateIframeAndLoadViewer({
+  ...
+});
+
+setThumbnailZoom(0.5)
+```
+
+Toggle displaying the search bar on the right
+
+```
+const { toggleSearchbar } = useCreateIframeAndLoadViewer({
+  ...
+});
+
+toggleSearchbar(true) // set this to true or false to open/close it.
+```
+
+Delete the AI conversation chat history
+
+```
+const { removeChatHistory } = useCreateIframeAndLoadViewer({
+  ...
+});
+
+removeChatHistory()
+```
+
+Get the 0-indexed array of selected pages
+
+```
+const { selectedPages } = useCreateIframeAndLoadViewer({
+  ...
+});
+```
+
+Extract the selected pages
+
+```
+const { extractPages } = useCreateIframeAndLoadViewer({
+  ...
+});
+
+extractPages()
 ```

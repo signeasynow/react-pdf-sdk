@@ -24,5 +24,10 @@ declare module 'pdf_editor_aleon35_react_plugin' {
     isReady: boolean;
     toggleFullScreenThumbnails: (newValue?: boolean) => void;
     setThumbnailZoom: (value: boolean) => void;
+    toggleSearchbar: (value: boolean) => void;
+    removeChatHistory: () => void;
+    splitPages: () => void;
+    extractPages: () => void;
+    selectedPages: number[];
   };
 }
