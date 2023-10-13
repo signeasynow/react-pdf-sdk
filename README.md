@@ -1,4 +1,4 @@
-# React PDF Tools
+# React PDF Editor
 
 View, edit, and Chat-with-your-PDF with AI.
 
