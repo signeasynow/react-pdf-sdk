@@ -18,11 +18,11 @@ Want to see the source code for the above demo? Find it [here](https://github.co
 
 1. Install
 
-npm install --save @prodfox/react-pdf-editor
+`npm install --save @prodfox/react-pdf-editor`
 
 or
 
-yarn add @prodfox/react-pdf-editor
+`yarn add @prodfox/react-pdf-editor`
 
 3. Create a component
 ```
