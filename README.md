@@ -16,7 +16,15 @@ Want to see the source code for the above demo? Find it [here](https://github.co
 
 1. Copy-paste the `pdf-ui` folder [here](https://github.com/prodfox-pdf/react-pdf-demo/tree/main/public/pdf-ui) into your own `public` folder.
 
-2. Create a component
+1. Install
+
+npm install --save @prodfox/react-pdf-editor
+
+or
+
+yarn add @prodfox/react-pdf-editor
+
+3. Create a component
 ```
 import { useRef } from 'react';
 import { useCreateIframeAndLoadViewer } from "@prodfox/react-pdf-editor";
