@@ -19,7 +19,7 @@ Want to see the source code for the above demo? Find it [here](https://github.co
 2. Create a component
 ```
 import { useRef } from 'react';
-import { useCreateIframeAndLoadViewer } from "@prodfox/react-ui-plugin";
+import { useCreateIframeAndLoadViewer } from "@prodfox/react-pdf-editor";
 
 function App() {
   const containerRef = useRef(null);
