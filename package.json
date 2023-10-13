@@ -1,5 +1,5 @@
 {
-  "name": "@prodfox/react-ui-plugin",
+  "name": "@prodfox/react-pdf-editor",
   "version": "1.2.0",
   "description": "## Core",
   "main": "dist/index.js",

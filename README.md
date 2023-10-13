@@ -295,3 +295,13 @@ const { extractPages } = useCreateIframeAndLoadViewer({
 
 extractPages()
 ```
+
+Split the document into several documents based on the split markers the user selected.
+
+```
+const { splitPages } = useCreateIframeAndLoadViewer({
+  ...
+});
+
+splitPages()
+```
