@@ -111,7 +111,7 @@ useCreateIframeAndLoadViewer({
 | download | Enable downloading the document |
 | thumbnails | Enable a thumbnails panel |
 | panel-toggle | Enable the left-side panel to be togglable |
-
+| chat | Enable AI conversations with your PDF (user ID is required after 10 questions) |
 
 ```
 useCreateIframeAndLoadViewer({
