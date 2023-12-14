@@ -1,0 +1,1 @@
+export default __webpack_public_path__ + "node_modules/alien35-pf/web/images/loading-icon.gif";

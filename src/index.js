@@ -4,19 +4,23 @@ export const useCreateIframeAndLoadViewer = ({
   files,
   fileName,
   licenseKey,
+  customData,
   uuid,
   tools,
   locale,
   mode,
   container,
   iframeSrc,
-  onFileFailed
+  onFileFailed,
+  initialAnnotations,
+  modifiedUiElements
 }) => {
   const [internalIsReady, setInternalIsReady] = useState(false);  // Add this state variable
   const [selectedPages, setSelectedPages] = useState([]);
   const done = useRef(false);
   const iframeLoadedSuccessfully = useRef(false); // Add this ref to keep track of iframe's load state
   const [pagesLoaded, setPagesLoaded] = useState(null);
+  const [annotations, setAnnotations] = useState([]);
 
   const createIframe = () => {
     const iframe = document.createElement('iframe');
@@ -41,7 +45,7 @@ export const useCreateIframeAndLoadViewer = ({
     // When the iframe is loaded, post the file to it
     iframe.onload = function() {
       const targetOrigin = window.location.origin;
-      const message = { files, fileName, tools, locale, licenseKey, mode, uuid };
+      const message = { files, fileName, tools, locale, licenseKey, mode, uuid, customData, initialAnnotations, modifiedUiElements };
     
       // Set up a function to send the message
       const sendMessage = () => {
@@ -71,6 +75,9 @@ export const useCreateIframeAndLoadViewer = ({
         if (event.data.type === "pages-loaded") {
           setPagesLoaded(event.data.message);
         }
+        if (event.data.type === "annotations-change") {
+          setAnnotations(event.data.message);
+        }
       });
     };
 
@@ -87,6 +94,19 @@ export const useCreateIframeAndLoadViewer = ({
   useEffect(() => {
     window.parent.addEventListener('message', handleIframeLoaded);
     return () => window.parent.removeEventListener('message', handleIframeLoaded);
+  }, []);
+
+  const [clickedTag, setClickedTag] = useState(null);
+
+  const handleTagClicked = (event) => {
+    console.log(event, 'event tag')
+    if (event.data.type === 'click-tag') {
+      setClickedTag(event.data);
+    }
+  }
+  useEffect(() => {
+    window.parent.addEventListener('message', handleTagClicked);
+    return () => window.parent.removeEventListener('message', handleTagClicked);
   }, []);
 
   const handleVisibilityChange = () => {
@@ -138,6 +158,36 @@ export const useCreateIframeAndLoadViewer = ({
     // @ts-ignore
     var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
     iframeWin.postMessage({ type: 'toggle-searchbar', enable }, window.location.origin);
+  };
+
+  const requestBuffer = async (value) => {
+    return new Promise((resolve, reject) => {
+      const listener = (event) => {
+        if (event.data.type === 'request-buffer-completed') {
+          resolve(event.data.message);  // Resolve the promise with the result
+          window.removeEventListener('message', listener);  // Remove the listener to clean up
+        }
+        else if (event.data.type === 'request-buffer-failed') {
+          reject(new Error(event.data.message));  // Reject the promise with the error message
+          window.removeEventListener('message', listener);  // Remove the listener to clean up
+        }
+      };
+  
+      // Adding the event listener before sending the postMessage
+      window.addEventListener('message', listener);
+  
+      // @ts-ignore
+      var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    
+      // Sending the extract-pages message to the iframe
+      iframeWin.postMessage({ type: 'request-buffer', value }, window.location.origin);
+    });
+  };
+
+  const toggleSignatureModal = (enable) => {
+    // @ts-ignore
+    var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    iframeWin.postMessage({ type: 'toggle-signature-modal', enable }, window.location.origin);
   };
 
   const setThumbnailZoom = (value) => {
@@ -267,13 +317,20 @@ export const useCreateIframeAndLoadViewer = ({
   };
 
   return {
+    requestBuffer,
     removeChatHistory,
     splitPages,
     combineFiles, 
     mergeFiles,
     pagesLoaded,
+    clickedTag,
     extractPages, download,
     toggleSearchbar,
+    toggleSignatureModal,
     toggleFullScreenThumbnails,
-    isReady: internalIsReady, setThumbnailZoom, selectedPages };
+    isReady: internalIsReady,
+    setThumbnailZoom,
+    selectedPages,
+    annotations
+  };
 };
