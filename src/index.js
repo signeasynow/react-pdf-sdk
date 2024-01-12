@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 export const useCreateIframeAndLoadViewer = ({
   files,
+  authInfo,
   fileName,
   licenseKey,
   customData,
@@ -21,6 +22,7 @@ export const useCreateIframeAndLoadViewer = ({
   const iframeLoadedSuccessfully = useRef(false); // Add this ref to keep track of iframe's load state
   const [pagesLoaded, setPagesLoaded] = useState(null);
   const [annotations, setAnnotations] = useState([]);
+  const [authTokens, setAuthTokens] = useState(null);
 
   const createIframe = () => {
     const iframe = document.createElement('iframe');
@@ -45,7 +47,7 @@ export const useCreateIframeAndLoadViewer = ({
     // When the iframe is loaded, post the file to it
     iframe.onload = function() {
       const targetOrigin = window.location.origin;
-      const message = { files, fileName, tools, locale, licenseKey, mode, uuid, customData, initialAnnotations, modifiedUiElements };
+      const message = { files, fileName, tools, locale, licenseKey, mode, uuid, customData, initialAnnotations, modifiedUiElements, authInfo };
     
       // Set up a function to send the message
       const sendMessage = () => {
@@ -88,6 +90,26 @@ export const useCreateIframeAndLoadViewer = ({
     if (event.data.type === 'iframe-loaded' && event.data.success) {
       iframeLoadedSuccessfully.current = true;
       setInternalIsReady(true);
+    }
+    // let's just lump more stuff in here
+    if (event.data.type === 'token-granted' && event.data.token) {
+      console.log("saving token", event.data.token);
+      setAuthTokens(JSON.stringify({
+        token: event.data.token,
+        refreshToken: event.data.refreshToken
+      }));
+    }
+    if (event.data.type === 'token-removed') {
+      setAuthTokens(null);
+    }
+    if (event.data.type === 'request-token' && event.data.success) {
+      var iframeWin = document.getElementById('webviewer-1').contentWindow;
+      let parsedTokens = authTokens ? JSON.parse(authTokens) : null;
+      iframeWin?.postMessage({ authInfo: {
+        token: parsedTokens?.token,
+        refreshToken: parsedTokens?.refreshToken
+      } }, '*');
+      // I believe this is only for the chrome extension tabs learning from each other.
     }
   };
 
@@ -194,6 +216,21 @@ export const useCreateIframeAndLoadViewer = ({
     // @ts-ignore
     var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
     iframeWin.postMessage({ type: 'set-thumbnail-zoom', value }, window.location.origin);
+  };
+
+  const setAnnotationEditorMode = (value) => {
+    // @ts-ignore
+    var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    iframeWin.postMessage({ type: 'set-annotation-editor-mode', value }, window.location.origin);
+  };
+
+  const setAuthInfo = ({token, refreshToken}) => {
+    // @ts-ignore
+    var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    iframeWin?.postMessage({ type: 'set-auth-info', authInfo: {
+      token,
+      refreshToken
+    } }, window.location.origin);
   };
 
   const splitPages = async () => {
@@ -319,6 +356,7 @@ export const useCreateIframeAndLoadViewer = ({
   return {
     requestBuffer,
     removeChatHistory,
+    setAuthInfo,
     splitPages,
     combineFiles, 
     mergeFiles,
@@ -329,8 +367,10 @@ export const useCreateIframeAndLoadViewer = ({
     toggleSignatureModal,
     toggleFullScreenThumbnails,
     isReady: internalIsReady,
+    setAnnotationEditorMode,
     setThumbnailZoom,
     selectedPages,
-    annotations
+    annotations,
+    authTokens
   };
 };
