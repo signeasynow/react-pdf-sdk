@@ -2,19 +2,19 @@
 
 View, edit, and Chat-with-your-PDF with AI.
 
-Add View to your app for free. Learn pricing for all features [here](https://www.prodfox.com/upgrade)
+Add View to your app for free. Learn pricing for all features [here](https://www.smartpricedoc.com/upgrade)
 
 ![Visual of app](https://media.discordapp.net/attachments/1065627273618800732/1161792368152956938/Feature_rich_React_component_for_viewing_editing_and_more.png?ex=65399675&is=65272175&hm=3ccb739e31aa1b1604b9e566a9556d8431c5ed3944df3bdb065f83317aec768d&=&width=1884&height=942)
 
 # Demo
 
-https://react-pdf-demo-sigma.vercel.app/
+https://www.smartpricedoc.com/edit-your-pdf
 
-Want to see the source code for the above demo? Find it [here](https://github.com/prodfox-pdf/react-pdf-demo).
+Want to see the source code for the above demo? Find it [here](https://github.com/smartpricedoc/react-pdf-demo).
 
 # Quick start
 
-1. Copy-paste the `pdf-ui` folder [here](https://github.com/prodfox-pdf/react-pdf-demo/tree/main/public/pdf-ui) into your own `public` folder.
+1. Copy-paste the `pdf-ui` folder [here](https://github.com/smartpricedoc/react-pdf-demo/tree/main/public/pdf-ui) into your own `public` folder.
 
 1. Install
 
