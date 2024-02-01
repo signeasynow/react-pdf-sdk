@@ -28,6 +28,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     container = _ref.container,
     iframeSrc = _ref.iframeSrc,
     onFileFailed = _ref.onFileFailed,
+    defaultAnnotationEditorMode = _ref.defaultAnnotationEditorMode,
     initialAnnotations = _ref.initialAnnotations,
     modifiedUiElements = _ref.modifiedUiElements;
   var _useState = (0, _react.useState)(false),
@@ -52,6 +53,10 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     _useState10 = _slicedToArray(_useState9, 2),
     authTokens = _useState10[0],
     setAuthTokens = _useState10[1];
+  var _useState11 = (0, _react.useState)(false),
+    _useState12 = _slicedToArray(_useState11, 2),
+    signatureModalOpen = _useState12[0],
+    setSignatureModalOpen = _useState12[1];
   var createIframe = function createIframe() {
     var iframe = document.createElement('iframe');
     iframe.src = iframeSrc || "/pdf-ui/index.html";
@@ -83,7 +88,8 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
         customData: customData,
         initialAnnotations: initialAnnotations,
         modifiedUiElements: modifiedUiElements,
-        authInfo: authInfo
+        authInfo: authInfo,
+        defaultAnnotationEditorMode: defaultAnnotationEditorMode
       };
 
       // Set up a function to send the message
@@ -117,6 +123,9 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
         if (event.data.type === "annotations-change") {
           setAnnotations(event.data.message);
         }
+        if (event.data.type === "annotation-modal-open-change") {
+          setSignatureModalOpen(event.data.message);
+        }
       });
     };
     container.current.appendChild(iframe);
@@ -128,7 +137,6 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     }
     // let's just lump more stuff in here
     if (event.data.type === 'token-granted' && event.data.token) {
-      console.log("saving token", event.data.token);
       setAuthTokens(JSON.stringify({
         token: event.data.token,
         refreshToken: event.data.refreshToken
@@ -156,12 +164,11 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
       return window.parent.removeEventListener('message', handleIframeLoaded);
     };
   }, []);
-  var _useState11 = (0, _react.useState)(null),
-    _useState12 = _slicedToArray(_useState11, 2),
-    clickedTag = _useState12[0],
-    setClickedTag = _useState12[1];
+  var _useState13 = (0, _react.useState)(null),
+    _useState14 = _slicedToArray(_useState13, 2),
+    clickedTag = _useState14[0],
+    setClickedTag = _useState14[1];
   var handleTagClicked = function handleTagClicked(event) {
-    console.log(event, 'event tag');
     if (event.data.type === 'click-tag') {
       setClickedTag(event.data);
     }
@@ -510,7 +517,8 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     setThumbnailZoom: setThumbnailZoom,
     selectedPages: selectedPages,
     annotations: annotations,
-    authTokens: authTokens
+    authTokens: authTokens,
+    signatureModalOpen: signatureModalOpen
   };
 };
 exports.useCreateIframeAndLoadViewer = useCreateIframeAndLoadViewer;

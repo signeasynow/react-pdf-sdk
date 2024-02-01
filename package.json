@@ -1,6 +1,6 @@
 {
   "name": "@prodfox/react-pdf-editor",
-  "version": "1.2.28",
+  "version": "1.2.32",
   "description": "## Core",
   "main": "dist/index.js",
   "scripts": {

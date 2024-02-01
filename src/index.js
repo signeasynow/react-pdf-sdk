@@ -13,6 +13,7 @@ export const useCreateIframeAndLoadViewer = ({
   container,
   iframeSrc,
   onFileFailed,
+  defaultAnnotationEditorMode,
   initialAnnotations,
   modifiedUiElements
 }) => {
@@ -23,6 +24,7 @@ export const useCreateIframeAndLoadViewer = ({
   const [pagesLoaded, setPagesLoaded] = useState(null);
   const [annotations, setAnnotations] = useState([]);
   const [authTokens, setAuthTokens] = useState(null);
+  const [signatureModalOpen, setSignatureModalOpen] = useState(false);
 
   const createIframe = () => {
     const iframe = document.createElement('iframe');
@@ -47,7 +49,7 @@ export const useCreateIframeAndLoadViewer = ({
     // When the iframe is loaded, post the file to it
     iframe.onload = function() {
       const targetOrigin = window.location.origin;
-      const message = { files, fileName, tools, locale, licenseKey, mode, uuid, customData, initialAnnotations, modifiedUiElements, authInfo };
+      const message = { files, fileName, tools, locale, licenseKey, mode, uuid, customData, initialAnnotations, modifiedUiElements, authInfo, defaultAnnotationEditorMode };
     
       // Set up a function to send the message
       const sendMessage = () => {
@@ -80,6 +82,9 @@ export const useCreateIframeAndLoadViewer = ({
         if (event.data.type === "annotations-change") {
           setAnnotations(event.data.message);
         }
+        if (event.data.type === "annotation-modal-open-change") {
+          setSignatureModalOpen(event.data.message);
+        }
       });
     };
 
@@ -93,7 +98,6 @@ export const useCreateIframeAndLoadViewer = ({
     }
     // let's just lump more stuff in here
     if (event.data.type === 'token-granted' && event.data.token) {
-      console.log("saving token", event.data.token);
       setAuthTokens(JSON.stringify({
         token: event.data.token,
         refreshToken: event.data.refreshToken
@@ -121,7 +125,6 @@ export const useCreateIframeAndLoadViewer = ({
   const [clickedTag, setClickedTag] = useState(null);
 
   const handleTagClicked = (event) => {
-    console.log(event, 'event tag')
     if (event.data.type === 'click-tag') {
       setClickedTag(event.data);
     }
@@ -216,12 +219,6 @@ export const useCreateIframeAndLoadViewer = ({
     // @ts-ignore
     var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
     iframeWin.postMessage({ type: 'set-thumbnail-zoom', value }, window.location.origin);
-  };
-
-  const setAnnotationEditorMode = (value) => {
-    // @ts-ignore
-    var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
-    iframeWin.postMessage({ type: 'set-annotation-editor-mode', value }, window.location.origin);
   };
 
   const setAuthInfo = ({token, refreshToken}) => {
@@ -367,10 +364,10 @@ export const useCreateIframeAndLoadViewer = ({
     toggleSignatureModal,
     toggleFullScreenThumbnails,
     isReady: internalIsReady,
-    setAnnotationEditorMode,
     setThumbnailZoom,
     selectedPages,
     annotations,
-    authTokens
+    authTokens,
+    signatureModalOpen
   };
 };
