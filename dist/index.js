@@ -51,14 +51,18 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     _useState8 = _slicedToArray(_useState7, 2),
     annotations = _useState8[0],
     setAnnotations = _useState8[1];
-  var _useState9 = (0, _react.useState)(null),
+  var _useState9 = (0, _react.useState)(false),
     _useState10 = _slicedToArray(_useState9, 2),
-    authTokens = _useState10[0],
-    setAuthTokens = _useState10[1];
-  var _useState11 = (0, _react.useState)(false),
+    hasSeal = _useState10[0],
+    setHasSeal = _useState10[1];
+  var _useState11 = (0, _react.useState)(null),
     _useState12 = _slicedToArray(_useState11, 2),
-    signatureModalOpen = _useState12[0],
-    setSignatureModalOpen = _useState12[1];
+    authTokens = _useState12[0],
+    setAuthTokens = _useState12[1];
+  var _useState13 = (0, _react.useState)(false),
+    _useState14 = _slicedToArray(_useState13, 2),
+    signatureModalOpen = _useState14[0],
+    setSignatureModalOpen = _useState14[1];
   var createIframe = function createIframe() {
     var iframe = document.createElement('iframe');
     iframe.src = iframeSrc || "/pdf-ui/index.html";
@@ -127,6 +131,9 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
         if (event.data.type === "annotations-change") {
           setAnnotations(event.data.message);
         }
+        if (event.data.type === 'has-seal-change') {
+          setHasSeal(!!event.data.message);
+        }
         if (event.data.type === "annotation-modal-open-change") {
           setSignatureModalOpen(event.data.message);
         }
@@ -168,10 +175,10 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
       return window.parent.removeEventListener('message', handleIframeLoaded);
     };
   }, []);
-  var _useState13 = (0, _react.useState)(null),
-    _useState14 = _slicedToArray(_useState13, 2),
-    clickedTag = _useState14[0],
-    setClickedTag = _useState14[1];
+  var _useState15 = (0, _react.useState)(null),
+    _useState16 = _slicedToArray(_useState15, 2),
+    clickedTag = _useState16[0],
+    setClickedTag = _useState16[1];
   var handleTagClicked = function handleTagClicked(event) {
     if (event.data.type === 'click-tag') {
       setClickedTag(event.data);
@@ -561,6 +568,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     setThumbnailZoom: setThumbnailZoom,
     selectedPages: selectedPages,
     annotations: annotations,
+    hasSeal: hasSeal,
     authTokens: authTokens,
     signatureModalOpen: signatureModalOpen
   };

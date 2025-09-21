@@ -25,6 +25,7 @@ export const useCreateIframeAndLoadViewer = ({
   const iframeLoadedSuccessfully = useRef(false); // Add this ref to keep track of iframe's load state
   const [pagesLoaded, setPagesLoaded] = useState(null);
   const [annotations, setAnnotations] = useState([]);
+  const [hasSeal, setHasSeal] = useState(false);
   const [authTokens, setAuthTokens] = useState(null);
   const [signatureModalOpen, setSignatureModalOpen] = useState(false);
 
@@ -83,6 +84,9 @@ export const useCreateIframeAndLoadViewer = ({
         }
         if (event.data.type === "annotations-change") {
           setAnnotations(event.data.message);
+        }
+        if (event.data.type === 'has-seal-change') {
+          setHasSeal(!!event.data.message);
         }
         if (event.data.type === "annotation-modal-open-change") {
           setSignatureModalOpen(event.data.message);
@@ -394,6 +398,7 @@ export const useCreateIframeAndLoadViewer = ({
     setThumbnailZoom,
     selectedPages,
     annotations,
+    hasSeal,
     authTokens,
     signatureModalOpen
   };
