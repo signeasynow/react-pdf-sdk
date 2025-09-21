@@ -26,6 +26,7 @@ export const useCreateIframeAndLoadViewer = ({
   const [pagesLoaded, setPagesLoaded] = useState(null);
   const [annotations, setAnnotations] = useState([]);
   const [hasSeal, setHasSeal] = useState(false);
+  const [notarySealIds, setNotarySealIds] = useState([]);
   const [authTokens, setAuthTokens] = useState(null);
   const [signatureModalOpen, setSignatureModalOpen] = useState(false);
 
@@ -88,6 +89,10 @@ export const useCreateIframeAndLoadViewer = ({
         if (event.data.type === 'has-seal-change') {
           console.log('has-seal-change', event.data.message);
           setHasSeal(!!event.data.message);
+        }
+        if (event.data.type === 'notary-seal-ids-change') {
+          const ids = Array.isArray(event.data.message) ? event.data.message : [];
+          setNotarySealIds(ids);
         }
         if (event.data.type === "annotation-modal-open-change") {
           setSignatureModalOpen(event.data.message);
@@ -399,6 +404,7 @@ export const useCreateIframeAndLoadViewer = ({
     setThumbnailZoom,
     selectedPages,
     annotations,
+    notarySealIds,
     hasSeal,
     authTokens,
     signatureModalOpen
