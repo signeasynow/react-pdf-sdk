@@ -86,6 +86,7 @@ export const useCreateIframeAndLoadViewer = ({
           setAnnotations(event.data.message);
         }
         if (event.data.type === 'has-seal-change') {
+          console.log('has-seal-change', event.data.message);
           setHasSeal(!!event.data.message);
         }
         if (event.data.type === "annotation-modal-open-change") {
