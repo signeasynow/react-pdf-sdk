@@ -15,6 +15,8 @@ export const useCreateIframeAndLoadViewer = ({
   onFileFailed,
   defaultAnnotationEditorMode,
   initialAnnotations,
+  notarySeal,
+  initialSigners,
   modifiedUiElements
 }) => {
   const [internalIsReady, setInternalIsReady] = useState(false);  // Add this state variable
@@ -49,7 +51,7 @@ export const useCreateIframeAndLoadViewer = ({
     // When the iframe is loaded, post the file to it
     iframe.onload = function() {
       const targetOrigin = window.location.origin;
-      const message = { files, fileName, tools, locale, licenseKey, mode, uuid, customData, initialAnnotations, modifiedUiElements, authInfo, defaultAnnotationEditorMode };
+      const message = { files, fileName, tools, locale, licenseKey, mode, uuid, customData, initialAnnotations, notarySeal, initialSigners, modifiedUiElements, authInfo, defaultAnnotationEditorMode };
     
       // Set up a function to send the message
       const sendMessage = () => {

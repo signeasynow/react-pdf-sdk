@@ -30,6 +30,8 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     onFileFailed = _ref.onFileFailed,
     defaultAnnotationEditorMode = _ref.defaultAnnotationEditorMode,
     initialAnnotations = _ref.initialAnnotations,
+    notarySeal = _ref.notarySeal,
+    initialSigners = _ref.initialSigners,
     modifiedUiElements = _ref.modifiedUiElements;
   var _useState = (0, _react.useState)(false),
     _useState2 = _slicedToArray(_useState, 2),
@@ -87,6 +89,8 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
         uuid: uuid,
         customData: customData,
         initialAnnotations: initialAnnotations,
+        notarySeal: notarySeal,
+        initialSigners: initialSigners,
         modifiedUiElements: modifiedUiElements,
         authInfo: authInfo,
         defaultAnnotationEditorMode: defaultAnnotationEditorMode
