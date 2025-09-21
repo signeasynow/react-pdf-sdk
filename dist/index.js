@@ -278,30 +278,69 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
       return _ref2.apply(this, arguments);
     };
   }();
+  var finalizeDocument = /*#__PURE__*/function () {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            return _context2.abrupt("return", new Promise(function (resolve, reject) {
+              var _document5;
+              var listener = function listener(event) {
+                if (!event || !event.data) return;
+                if (event.data.type === 'finalize-document') {
+                  // Child posts { type: 'finalize-document', annotations }
+                  resolve(event.data.annotations);
+                  window.removeEventListener('message', listener);
+                } else if (event.data.type === 'finalize-document-failed') {
+                  reject(new Error(event.data.message || 'Finalize document failed'));
+                  window.removeEventListener('message', listener);
+                }
+              };
+
+              // Add listener to capture the next finalize signal
+              window.addEventListener('message', listener);
+
+              // Optionally nudge the iframe if it supports being prompted to finalize
+              // @ts-ignore
+              var iframeWin = (_document5 = document) === null || _document5 === void 0 || (_document5 = _document5.getElementById('webviewer-1')) === null || _document5 === void 0 ? void 0 : _document5.contentWindow;
+              iframeWin === null || iframeWin === void 0 ? void 0 : iframeWin.postMessage({
+                type: 'finalize-document'
+              }, window.location.origin);
+            }));
+          case 1:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2);
+    }));
+    return function finalizeDocument() {
+      return _ref3.apply(this, arguments);
+    };
+  }();
   var toggleSignatureModal = function toggleSignatureModal(enable) {
-    var _document5;
+    var _document6;
     // @ts-ignore
-    var iframeWin = (_document5 = document) === null || _document5 === void 0 || (_document5 = _document5.getElementById('webviewer-1')) === null || _document5 === void 0 ? void 0 : _document5.contentWindow;
+    var iframeWin = (_document6 = document) === null || _document6 === void 0 || (_document6 = _document6.getElementById('webviewer-1')) === null || _document6 === void 0 ? void 0 : _document6.contentWindow;
     iframeWin.postMessage({
       type: 'toggle-signature-modal',
       enable: enable
     }, window.location.origin);
   };
   var setThumbnailZoom = function setThumbnailZoom(value) {
-    var _document6;
+    var _document7;
     // @ts-ignore
-    var iframeWin = (_document6 = document) === null || _document6 === void 0 || (_document6 = _document6.getElementById('webviewer-1')) === null || _document6 === void 0 ? void 0 : _document6.contentWindow;
+    var iframeWin = (_document7 = document) === null || _document7 === void 0 || (_document7 = _document7.getElementById('webviewer-1')) === null || _document7 === void 0 ? void 0 : _document7.contentWindow;
     iframeWin.postMessage({
       type: 'set-thumbnail-zoom',
       value: value
     }, window.location.origin);
   };
-  var setAuthInfo = function setAuthInfo(_ref3) {
-    var _document7;
-    var token = _ref3.token,
-      refreshToken = _ref3.refreshToken;
+  var setAuthInfo = function setAuthInfo(_ref4) {
+    var _document8;
+    var token = _ref4.token,
+      refreshToken = _ref4.refreshToken;
     // @ts-ignore
-    var iframeWin = (_document7 = document) === null || _document7 === void 0 || (_document7 = _document7.getElementById('webviewer-1')) === null || _document7 === void 0 ? void 0 : _document7.contentWindow;
+    var iframeWin = (_document8 = document) === null || _document8 === void 0 || (_document8 = _document8.getElementById('webviewer-1')) === null || _document8 === void 0 ? void 0 : _document8.contentWindow;
     iframeWin === null || iframeWin === void 0 ? void 0 : iframeWin.postMessage({
       type: 'set-auth-info',
       authInfo: {
@@ -311,12 +350,12 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     }, window.location.origin);
   };
   var splitPages = /*#__PURE__*/function () {
-    var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-        while (1) switch (_context2.prev = _context2.next) {
+    var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
           case 0:
-            return _context2.abrupt("return", new Promise(function (resolve, reject) {
-              var _document8;
+            return _context3.abrupt("return", new Promise(function (resolve, reject) {
+              var _document9;
               var listener = function listener(event) {
                 if (event.data.type === 'split-pages-completed' && event.data.success) {
                   resolve(event.data.message); // Resolve the promise with the result
@@ -331,7 +370,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
               window.addEventListener('message', listener);
 
               // @ts-ignore
-              var iframeWin = (_document8 = document) === null || _document8 === void 0 || (_document8 = _document8.getElementById('webviewer-1')) === null || _document8 === void 0 ? void 0 : _document8.contentWindow;
+              var iframeWin = (_document9 = document) === null || _document9 === void 0 || (_document9 = _document9.getElementById('webviewer-1')) === null || _document9 === void 0 ? void 0 : _document9.contentWindow;
 
               // Sending the extract-pages message to the iframe
               iframeWin.postMessage({
@@ -340,21 +379,21 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
             }));
           case 1:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
-      }, _callee2);
+      }, _callee3);
     }));
     return function splitPages() {
-      return _ref4.apply(this, arguments);
+      return _ref5.apply(this, arguments);
     };
   }();
   var mergeFiles = /*#__PURE__*/function () {
-    var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(value) {
-      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) switch (_context3.prev = _context3.next) {
+    var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(value) {
+      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+        while (1) switch (_context4.prev = _context4.next) {
           case 0:
-            return _context3.abrupt("return", new Promise(function (resolve, reject) {
-              var _document9;
+            return _context4.abrupt("return", new Promise(function (resolve, reject) {
+              var _document10;
               var listener = function listener(event) {
                 if (event.data.type === 'merge-files-completed' && event.data.success) {
                   resolve(event.data.message); // Resolve the promise with the result
@@ -369,7 +408,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
               window.addEventListener('message', listener);
 
               // @ts-ignore
-              var iframeWin = (_document9 = document) === null || _document9 === void 0 || (_document9 = _document9.getElementById('webviewer-1')) === null || _document9 === void 0 ? void 0 : _document9.contentWindow;
+              var iframeWin = (_document10 = document) === null || _document10 === void 0 || (_document10 = _document10.getElementById('webviewer-1')) === null || _document10 === void 0 ? void 0 : _document10.contentWindow;
 
               // Sending the extract-pages message to the iframe
               iframeWin.postMessage({
@@ -379,21 +418,21 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
             }));
           case 1:
           case "end":
-            return _context3.stop();
+            return _context4.stop();
         }
-      }, _callee3);
+      }, _callee4);
     }));
     return function mergeFiles(_x3) {
-      return _ref5.apply(this, arguments);
+      return _ref6.apply(this, arguments);
     };
   }();
   var removeChatHistory = /*#__PURE__*/function () {
-    var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-        while (1) switch (_context4.prev = _context4.next) {
+    var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+      return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+        while (1) switch (_context5.prev = _context5.next) {
           case 0:
-            return _context4.abrupt("return", new Promise(function (resolve, reject) {
-              var _document10;
+            return _context5.abrupt("return", new Promise(function (resolve, reject) {
+              var _document11;
               var listener = function listener(event) {
                 if (event.data.type === 'remove-chat-history-completed' && event.data.success) {
                   resolve(event.data.message); // Resolve the promise with the result
@@ -408,7 +447,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
               window.addEventListener('message', listener);
 
               // @ts-ignore
-              var iframeWin = (_document10 = document) === null || _document10 === void 0 || (_document10 = _document10.getElementById('webviewer-1')) === null || _document10 === void 0 ? void 0 : _document10.contentWindow;
+              var iframeWin = (_document11 = document) === null || _document11 === void 0 || (_document11 = _document11.getElementById('webviewer-1')) === null || _document11 === void 0 ? void 0 : _document11.contentWindow;
 
               // Sending the extract-pages message to the iframe
               iframeWin.postMessage({
@@ -417,21 +456,21 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
             }));
           case 1:
           case "end":
-            return _context4.stop();
+            return _context5.stop();
         }
-      }, _callee4);
+      }, _callee5);
     }));
     return function removeChatHistory() {
-      return _ref6.apply(this, arguments);
+      return _ref7.apply(this, arguments);
     };
   }();
   var combineFiles = /*#__PURE__*/function () {
-    var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(value) {
-      return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-        while (1) switch (_context5.prev = _context5.next) {
+    var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(value) {
+      return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+        while (1) switch (_context6.prev = _context6.next) {
           case 0:
-            return _context5.abrupt("return", new Promise(function (resolve, reject) {
-              var _document11;
+            return _context6.abrupt("return", new Promise(function (resolve, reject) {
+              var _document12;
               var listener = function listener(event) {
                 if (event.data.type === 'combine-files-completed' && event.data.success) {
                   resolve(event.data.message); // Resolve the promise with the result
@@ -446,7 +485,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
               window.addEventListener('message', listener);
 
               // @ts-ignore
-              var iframeWin = (_document11 = document) === null || _document11 === void 0 || (_document11 = _document11.getElementById('webviewer-1')) === null || _document11 === void 0 ? void 0 : _document11.contentWindow;
+              var iframeWin = (_document12 = document) === null || _document12 === void 0 || (_document12 = _document12.getElementById('webviewer-1')) === null || _document12 === void 0 ? void 0 : _document12.contentWindow;
 
               // Sending the extract-pages message to the iframe
               iframeWin.postMessage({
@@ -456,21 +495,21 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
             }));
           case 1:
           case "end":
-            return _context5.stop();
+            return _context6.stop();
         }
-      }, _callee5);
+      }, _callee6);
     }));
     return function combineFiles(_x4) {
-      return _ref7.apply(this, arguments);
+      return _ref8.apply(this, arguments);
     };
   }();
   var extractPages = /*#__PURE__*/function () {
-    var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(value) {
-      return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-        while (1) switch (_context6.prev = _context6.next) {
+    var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(value) {
+      return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+        while (1) switch (_context7.prev = _context7.next) {
           case 0:
-            return _context6.abrupt("return", new Promise(function (resolve, reject) {
-              var _document12;
+            return _context7.abrupt("return", new Promise(function (resolve, reject) {
+              var _document13;
               var listener = function listener(event) {
                 if (event.data.type === 'extract-pages-completed' && event.data.success) {
                   resolve(event.data.result); // Resolve the promise with the result
@@ -485,7 +524,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
               window.addEventListener('message', listener);
 
               // @ts-ignore
-              var iframeWin = (_document12 = document) === null || _document12 === void 0 || (_document12 = _document12.getElementById('webviewer-1')) === null || _document12 === void 0 ? void 0 : _document12.contentWindow;
+              var iframeWin = (_document13 = document) === null || _document13 === void 0 || (_document13 = _document13.getElementById('webviewer-1')) === null || _document13 === void 0 ? void 0 : _document13.contentWindow;
 
               // Sending the extract-pages message to the iframe
               iframeWin.postMessage({
@@ -495,16 +534,17 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
             }));
           case 1:
           case "end":
-            return _context6.stop();
+            return _context7.stop();
         }
-      }, _callee6);
+      }, _callee7);
     }));
     return function extractPages(_x5) {
-      return _ref8.apply(this, arguments);
+      return _ref9.apply(this, arguments);
     };
   }();
   return {
     requestBuffer: requestBuffer,
+    finalizeDocument: finalizeDocument,
     removeChatHistory: removeChatHistory,
     setAuthInfo: setAuthInfo,
     splitPages: splitPages,

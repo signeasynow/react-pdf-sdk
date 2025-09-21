@@ -211,6 +211,30 @@ export const useCreateIframeAndLoadViewer = ({
     });
   };
 
+  const finalizeDocument = async () => {
+    return new Promise((resolve, reject) => {
+      const listener = (event) => {
+        if (!event || !event.data) return;
+        if (event.data.type === 'finalize-document') {
+          // Child posts { type: 'finalize-document', annotations }
+          resolve(event.data.annotations);
+          window.removeEventListener('message', listener);
+        } else if (event.data.type === 'finalize-document-failed') {
+          reject(new Error(event.data.message || 'Finalize document failed'));
+          window.removeEventListener('message', listener);
+        }
+      };
+
+      // Add listener to capture the next finalize signal
+      window.addEventListener('message', listener);
+
+      // Optionally nudge the iframe if it supports being prompted to finalize
+      // @ts-ignore
+      var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+      iframeWin?.postMessage({ type: 'finalize-document' }, window.location.origin);
+    });
+  }
+
   const toggleSignatureModal = (enable) => {
     // @ts-ignore
     var iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
@@ -354,6 +378,7 @@ export const useCreateIframeAndLoadViewer = ({
 
   return {
     requestBuffer,
+    finalizeDocument,
     removeChatHistory,
     setAuthInfo,
     splitPages,
