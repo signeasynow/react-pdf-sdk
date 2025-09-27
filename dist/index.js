@@ -32,7 +32,8 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     initialAnnotations = _ref.initialAnnotations,
     notarySeal = _ref.notarySeal,
     initialSigners = _ref.initialSigners,
-    modifiedUiElements = _ref.modifiedUiElements;
+    modifiedUiElements = _ref.modifiedUiElements,
+    textTagDefaults = _ref.textTagDefaults;
   var _useState = (0, _react.useState)(false),
     _useState2 = _slicedToArray(_useState, 2),
     internalIsReady = _useState2[0],
@@ -101,7 +102,8 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
         initialSigners: initialSigners,
         modifiedUiElements: modifiedUiElements,
         authInfo: authInfo,
-        defaultAnnotationEditorMode: defaultAnnotationEditorMode
+        defaultAnnotationEditorMode: defaultAnnotationEditorMode,
+        textTagDefaults: textTagDefaults
       };
 
       // Set up a function to send the message
