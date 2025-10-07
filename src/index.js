@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const useCreateIframeAndLoadViewer = ({
   files,
@@ -30,6 +30,7 @@ export const useCreateIframeAndLoadViewer = ({
   const [notarySealIds, setNotarySealIds] = useState([]);
   const [authTokens, setAuthTokens] = useState(null);
   const [signatureModalOpen, setSignatureModalOpen] = useState(false);
+  const documentUpdatedListeners = useRef(new Set());
 
   const createIframe = () => {
     const iframe = document.createElement('iframe');
@@ -98,6 +99,16 @@ export const useCreateIframeAndLoadViewer = ({
         if (event.data.type === "annotation-modal-open-change") {
           setSignatureModalOpen(event.data.message);
         }
+        if (event.data?.type === 'document-updated') {
+          documentUpdatedListeners.current.forEach((listener) => {
+            try {
+              listener(event.data.message);
+            }
+            catch (listenerError) {
+              console.error('Error running document-updated listener', listenerError);
+            }
+          });
+        }
       });
     };
 
@@ -133,6 +144,10 @@ export const useCreateIframeAndLoadViewer = ({
   useEffect(() => {
     window.parent.addEventListener('message', handleIframeLoaded);
     return () => window.parent.removeEventListener('message', handleIframeLoaded);
+  }, []);
+
+  useEffect(() => () => {
+    documentUpdatedListeners.current.clear();
   }, []);
 
   const [clickedTag, setClickedTag] = useState(null);
@@ -387,6 +402,19 @@ export const useCreateIframeAndLoadViewer = ({
     });
   };
 
+  const onDocumentUpdated = useCallback((listener) => {
+    if (typeof listener !== 'function') {
+      console.warn('onDocumentUpdated requires a function listener');
+      return () => {};
+    }
+
+    documentUpdatedListeners.current.add(listener);
+
+    return () => {
+      documentUpdatedListeners.current.delete(listener);
+    };
+  }, []);
+
   return {
     requestBuffer,
     finalizeDocument,
@@ -408,6 +436,7 @@ export const useCreateIframeAndLoadViewer = ({
     notarySealIds,
     hasSeal,
     authTokens,
-    signatureModalOpen
+    signatureModalOpen,
+    onDocumentUpdated
   };
 };
