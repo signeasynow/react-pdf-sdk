@@ -16,6 +16,7 @@ declare module 'pdf_editor_aleon35_react_plugin' {
       mode?: "split" | "regular",
       fileName?: string;
       onFileFailed?: (message: string) => void;
+      hideUndoRedoButtons?: boolean;
     }
   ) => {
     combineFiles: () => void;
