@@ -68,6 +68,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     _useState16 = _slicedToArray(_useState15, 2),
     signatureModalOpen = _useState16[0],
     setSignatureModalOpen = _useState16[1];
+  var documentUpdatedListeners = (0, _react.useRef)(new Set());
   var createIframe = function createIframe() {
     var iframe = document.createElement('iframe');
     iframe.src = iframeSrc || "/pdf-ui/index.html";
@@ -120,6 +121,7 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
 
       // Set up an event listener to listen for a response from the iframe
       window.parent.addEventListener('message', function (event) {
+        var _event$data;
         if (event.data.type === 'file-received' && event.data.success) {
           // If the message was received successfully, clear the interval
           clearInterval(interval);
@@ -147,6 +149,15 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
         }
         if (event.data.type === "annotation-modal-open-change") {
           setSignatureModalOpen(event.data.message);
+        }
+        if (((_event$data = event.data) === null || _event$data === void 0 ? void 0 : _event$data.type) === 'document-updated') {
+          documentUpdatedListeners.current.forEach(function (listener) {
+            try {
+              listener(event.data.message);
+            } catch (listenerError) {
+              console.error('Error running document-updated listener', listenerError);
+            }
+          });
         }
       });
     };
@@ -184,6 +195,11 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     window.parent.addEventListener('message', handleIframeLoaded);
     return function () {
       return window.parent.removeEventListener('message', handleIframeLoaded);
+    };
+  }, []);
+  (0, _react.useEffect)(function () {
+    return function () {
+      documentUpdatedListeners.current.clear();
     };
   }, []);
   var _useState17 = (0, _react.useState)(null),
@@ -560,6 +576,16 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
       return _ref9.apply(this, arguments);
     };
   }();
+  var onDocumentUpdated = (0, _react.useCallback)(function (listener) {
+    if (typeof listener !== 'function') {
+      console.warn('onDocumentUpdated requires a function listener');
+      return function () {};
+    }
+    documentUpdatedListeners.current.add(listener);
+    return function () {
+      documentUpdatedListeners.current["delete"](listener);
+    };
+  }, []);
   return {
     requestBuffer: requestBuffer,
     finalizeDocument: finalizeDocument,
@@ -582,7 +608,8 @@ var useCreateIframeAndLoadViewer = function useCreateIframeAndLoadViewer(_ref) {
     notarySealIds: notarySealIds,
     hasSeal: hasSeal,
     authTokens: authTokens,
-    signatureModalOpen: signatureModalOpen
+    signatureModalOpen: signatureModalOpen,
+    onDocumentUpdated: onDocumentUpdated
   };
 };
 exports.useCreateIframeAndLoadViewer = useCreateIframeAndLoadViewer;

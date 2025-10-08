@@ -29,5 +29,6 @@ declare module 'pdf_editor_aleon35_react_plugin' {
     splitPages: () => void;
     extractPages: () => void;
     selectedPages: number[];
+    onDocumentUpdated: (listener: (pdfData: Uint8Array) => void) => () => void;
   };
 }
