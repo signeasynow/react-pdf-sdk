@@ -18,7 +18,8 @@ export const useCreateIframeAndLoadViewer = ({
   notarySeal,
   initialSigners,
   modifiedUiElements,
-  textTagDefaults
+  textTagDefaults,
+  hideUndoRedoButtons
 }) => {
   const [internalIsReady, setInternalIsReady] = useState(false);  // Add this state variable
   const [selectedPages, setSelectedPages] = useState([]);
@@ -55,7 +56,7 @@ export const useCreateIframeAndLoadViewer = ({
     // When the iframe is loaded, post the file to it
     iframe.onload = function() {
       const targetOrigin = window.location.origin;
-      const message = { files, fileName, tools, locale, licenseKey, mode, uuid, customData, initialAnnotations, notarySeal, initialSigners, modifiedUiElements, authInfo, defaultAnnotationEditorMode, textTagDefaults };
+      const message = { files, fileName, tools, locale, licenseKey, mode, uuid, customData, initialAnnotations, notarySeal, initialSigners, modifiedUiElements, authInfo, defaultAnnotationEditorMode, textTagDefaults, hideUndoRedoButtons };
     
       // Set up a function to send the message
       const sendMessage = () => {
@@ -194,6 +195,18 @@ export const useCreateIframeAndLoadViewer = ({
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
+
+  useEffect(() => {
+    if (typeof hideUndoRedoButtons === 'undefined') {
+      return;
+    }
+    if (!internalIsReady) {
+      return;
+    }
+    // @ts-ignore
+    const iframeWin = document?.getElementById('webviewer-1')?.contentWindow;
+    iframeWin?.postMessage({ hideUndoRedoButtons }, window.location.origin);
+  }, [hideUndoRedoButtons, internalIsReady]);
 
   const download = () => {
     // @ts-ignore
